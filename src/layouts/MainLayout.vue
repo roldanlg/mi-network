@@ -1,6 +1,10 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <login-modal ref="loginModalRef" v-model="isLoginModalOpen"></login-modal>
+    <register-modal
+      ref="registerModalRef"
+      v-model="isRegisterModalOpen"
+    ></register-modal>
     <q-header elevated>
       <q-toolbar>
         <q-btn
@@ -13,26 +17,54 @@
         />
 
         <q-toolbar-title>
-          Mi Network
+          <q-btn flat to="/"> Mi Network</q-btn>
         </q-toolbar-title>
 
         <div>
-          <q-btn icon="login" round flat @click="isLoginModalOpen = true"></q-btn>
+          <q-btn
+            icon="mdi-account-check"
+            round
+            flat
+            @click="isLoginModalOpen = true"
+            v-if="!loggedUser"
+          ></q-btn>
+          <q-btn
+            icon="mdi-account-plus-outline"
+            color="black"
+            round
+            flat
+            @click="isRegisterModalOpen = true"
+            v-if="!loggedUser"
+          ></q-btn>
+          <q-btn-dropdown
+            split
+            rounded
+            icon="mdi-account-outline"
+            color="black"
+            flat
+            v-if="loggedUser"
+            :label="loggedUser.name"
+          >
+            <q-list>
+              <q-item clickable v-close-popup>
+                <q-item-section>
+                  <q-item-label>Preferencias</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section>
+                  <q-item-label @click="onLogOut">Salir</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+        <q-item-label header> Essential Links</q-item-label>
 
         <EssentialLink
           v-for="link in linksList"
@@ -43,7 +75,13 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <transition
+        appear
+        enter-active-class="animated slideInLeft slower"
+        leave-active-class="animated slideOutRight slower"
+      >
+        <router-view />
+      </transition>
       <q-footer>
         <main-layout-footer></main-layout-footer>
       </q-footer>
@@ -52,66 +90,69 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
+import { ref, computed, watch } from 'vue';
+import EssentialLink, {
+  EssentialLinkProps,
+} from 'components/EssentialLink.vue';
 import MainLayoutFooter from 'components/MainLayoutFooter.vue';
 import loginModal from 'components/LoginModal.vue';
+import RegisterModal from 'components/RegisterModal.vue';
+import { useAuthStore } from 'stores/auth-store';
+import { User } from 'components/models';
+import { useQuasar } from 'quasar';
 
+const $q = useQuasar();
 const isLoginModalOpen = ref(false);
+const isRegisterModalOpen = ref(false);
+
+const authStore = useAuthStore();
+console.log('iniciando vista');
+const theUser = computed<User | null>(() => authStore.user);
+
+const loggedUser = ref<User | null>(null);
+watch(theUser, (newVal) => {
+  loggedUser.value = newVal;
+});
 
 defineOptions({
-  name: 'MainLayout'
+  name: 'MainLayout',
 });
 
 const linksList: EssentialLinkProps[] = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: 'Publicaciones',
+    caption: 'contenido público',
+    icon: 'mdi-cards-outline',
+    link: '/PostsPage',
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Mis Amigos',
+    caption: 'contenido de mis amistades',
+    icon: 'mdi-contacts',
+    link: '/FriendsPage',
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: 'Buscar',
+    caption: 'encuentre todo lo que busca aquí',
+    icon: 'mdi-eye-outline',
+    link: '/SearchPage',
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    title: 'Conversaciones',
+    caption: 'converse con sus amigos',
+    icon: 'mdi-chat',
+    link: '/ChatPage',
   },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
 ];
 
 const leftDrawerOpen = ref(false);
 
-function toggleLeftDrawer () {
+function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
+const onLogOut = () => {
+  authStore.logout();
+  $q.notify({ type: 'warning', message: 'Vuelva pronto', position: 'top' });
+};
 </script>

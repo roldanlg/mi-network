@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useAuthStore } from 'stores/auth-store';
-import { useDialogPluginComponent, useQuasar } from 'quasar';
+import { useDialogPluginComponent } from 'quasar';
 
 defineEmits([...useDialogPluginComponent.emits]);
 
-const $q = useQuasar();
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent();
 const authStore = useAuthStore();
 const isPwd = ref(true);
 const email = ref('');
 const password = ref('');
+const name = ref('');
 const loading = ref(false);
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -21,28 +21,33 @@ const emailRules = [
     emailRegex.test(val) || 'La dirección de correo no es válida',
 ];
 
+const nameRules = [(val: string) => !!val || 'El campo es obligatorio'];
 const passwordRules = [(val: string) => !!val || 'El campo es obligatorio'];
 
 const isFormValid = computed(() => {
-  return emailRules.every(rule => rule(email.value) === true) && passwordRules.every(rule => rule(password.value) === true);
-})
+  return (
+    emailRules.every((rule) => rule(email.value) === true) &&
+    passwordRules.every((rule) => rule(password.value) === true) &&
+    nameRules.every((rule) => rule(name.value) === true)
+  );
+});
 
+const errorMsg = computed(() => authStore.error);
 const onOKClick = async () => {
   loading.value = true;
   try {
-    await authStore.login({ email: email.value, password: password.value })
-      .then (() => {
+    await authStore
+      .register({name: name.value, email: email.value, password: password.value })
+      .then(() => {
         if (authStore.error) {
           console.log(authStore.error);
-          $q.notify({ type: 'negative', message: authStore.error, position: 'top-right' });
         } else {
           console.log(authStore.$state);
-          $q.notify({ type: 'positive', message: 'Hola ' + authStore.user?.name, position: 'bottom-right' });
           setTimeout(() => {
             onDialogOK();
           }, 2000);
         }
-      })
+      });
   } catch (error) {
     console.log(error);
   } finally {
@@ -53,16 +58,15 @@ const onOKClick = async () => {
 };
 
 const handleDialogHide = () => {
-  authStore.clearError()
-  onDialogHide()
-}
+  authStore.clearError();
+  onDialogHide();
+};
 </script>
 
 <template>
   <q-dialog
     ref="dialogRef"
     @hide="handleDialogHide"
-    position="top"
     transition-show="slide-down"
   >
     <q-card class="q-pa-lg">
@@ -70,7 +74,7 @@ const handleDialogHide = () => {
         horizontal
         class="flex justify-between align-items-center"
       >
-        <div>Ingrese a su red</div>
+        <div>Adéntrese en la red</div>
         <q-btn
           flat
           dense
@@ -82,6 +86,18 @@ const handleDialogHide = () => {
       </q-card-section>
       <q-card-section horizontal>
         <q-form :on-submit="onOKClick" class="q-gutter-md">
+          <q-input
+            v-model="name"
+            type="text"
+            hint="Nombre o nick"
+            :rules="nameRules"
+            item-aligned
+            label="Nombre"
+          >
+            <template v-slot:prepend>
+              <q-icon name="face" />
+            </template>
+          </q-input>
           <q-input
             v-model="email"
             type="email"
@@ -113,13 +129,21 @@ const handleDialogHide = () => {
         </q-form>
       </q-card-section>
       <q-card-actions align="right" class="q-mt-lg">
+        <q-banner v-if="errorMsg" class="text-white bg-red q-mr-xs" dense>
+          <template v-slot:action>
+            <div class="flex justify-between align-items-center">
+              <span>{{ errorMsg }}</span>
+              <q-icon flat color="white" name="error" class="q-ml-sm" />
+            </div>
+          </template>
+        </q-banner>
         <q-btn
           flat
           dense
           @click="onOKClick"
           :loading="loading"
           :disable="!isFormValid"
-          >login</q-btn
+          >Register</q-btn
         >
       </q-card-actions>
     </q-card>
