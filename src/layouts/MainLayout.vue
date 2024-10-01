@@ -1,5 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
+    <login-modal ref="loginModalRef" v-model="isLoginModalOpen"></login-modal>
     <q-header elevated>
       <q-toolbar>
         <q-btn
@@ -15,7 +16,9 @@
           Mi Network
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <q-btn icon="login" round flat @click="isLoginModalOpen = true"></q-btn>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -52,6 +55,9 @@
 import { ref } from 'vue';
 import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
 import MainLayoutFooter from 'components/MainLayoutFooter.vue';
+import loginModal from 'components/LoginModal.vue';
+
+const isLoginModalOpen = ref(false);
 
 defineOptions({
   name: 'MainLayout'
@@ -107,4 +113,5 @@ const leftDrawerOpen = ref(false);
 function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
 </script>

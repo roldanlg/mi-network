@@ -1,5 +1,5 @@
 <template>
-  <footer class="flex justify-between p-10 text-grey-4">
+  <footer class="flex justify-between p-10 text-grey-4 align-items-center q-pa-md">
     <div>Copyright 2024.</div>
     <div>
       hecho por
@@ -25,12 +25,6 @@ const sendMeMail = () => {
 </script>
 
 <style lang="scss" scoped>
-footer {
-  align-items: center;
-}
-.p-10 {
-  padding: 10px;
-}
 .logos-container {
   display: flex;
   align-items: center;
