@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Mi Network
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
@@ -41,6 +41,9 @@
 
     <q-page-container>
       <router-view />
+      <q-footer>
+        <main-layout-footer></main-layout-footer>
+      </q-footer>
     </q-page-container>
   </q-layout>
 </template>
@@ -48,6 +51,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
+import MainLayoutFooter from 'components/MainLayoutFooter.vue';
 
 defineOptions({
   name: 'MainLayout'
