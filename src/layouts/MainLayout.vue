@@ -1,11 +1,11 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lFf">
     <login-modal ref="loginModalRef" v-model="isLoginModalOpen"></login-modal>
     <register-modal
       ref="registerModalRef"
       v-model="isRegisterModalOpen"
     ></register-modal>
-    <q-header elevated>
+    <q-header bordered>
       <q-toolbar>
         <q-btn
           flat
@@ -17,7 +17,7 @@
         />
 
         <q-toolbar-title>
-          <q-btn flat to="/"> Mi Network</q-btn>
+          <q-btn flat to="/" icon="home" label="Mi Network" class="align-items-center"></q-btn>
         </q-toolbar-title>
 
         <div>
@@ -46,14 +46,15 @@
             :label="loggedUser.name"
           >
             <q-list>
-              <q-item clickable v-close-popup>
+              <q-item clickable v-close-popup to="/PreferencesPage">
                 <q-item-section>
-                  <q-item-label>Preferencias</q-item-label>
+                  <q-item-label><q-icon name="mdi-cog" /> Preferencias</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-item-label @click="onLogOut">Salir</q-item-label>
+              <q-separator></q-separator>
+              <q-item clickable v-close-popup class="text-red">
+                <q-item-section class="text-right">
+                  <q-item-label @click="onLogOut">Salir <q-icon name="mdi-logout" /></q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -62,9 +63,9 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-3">
       <q-list>
-        <q-item-label header> Essential Links</q-item-label>
+        <q-item-label header> Contenidos</q-item-label>
 
         <EssentialLink
           v-for="link in linksList"
@@ -74,7 +75,7 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container class="bg-grey-2">
       <transition
         appear
         enter-active-class="animated slideInLeft slower"

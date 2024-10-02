@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useAuthStore } from 'stores/auth-store';
-import { useDialogPluginComponent } from 'quasar';
+import { useDialogPluginComponent, useQuasar } from 'quasar';
 
 defineEmits([...useDialogPluginComponent.emits]);
 
+const $q = useQuasar();
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent();
 const authStore = useAuthStore();
@@ -41,8 +42,10 @@ const onOKClick = async () => {
       .then(() => {
         if (authStore.error) {
           console.log(authStore.error);
+          $q.notify({ type: 'negative', message: authStore.error, position: 'top-right' });
         } else {
           console.log(authStore.$state);
+          $q.notify({ type: 'positive', message: 'Revise el correo para verificar su cuenta', position: 'bottom-right' });
           setTimeout(() => {
             onDialogOK();
           }, 2000);

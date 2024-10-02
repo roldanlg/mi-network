@@ -9,9 +9,9 @@
     </div>
     <div class="logos-container">
       con
-      <q-btn flat round dense icon="img:src/assets/quasar-logo.svg" size="md" href="https://quasar.dev" target="_blank"></q-btn>
-      <q-btn flat round dense :icon="mdiVuejs" size="md" text-color="red" href="https://vuejs.org" target="_blank"></q-btn>
-      <q-btn flat round dense :icon="mdiLaravel" size="md"  text-color="orange" href="https://laravel.com" target="_blank"></q-btn>
+      <q-btn flat round dense icon="img:src/assets/quasar-logo.svg" size="md" href="https://quasar.dev" target="_blank" class="bg-blue-1"></q-btn>
+      <q-btn flat round dense :icon="mdiVuejs" size="md" text-color="red" href="https://vuejs.org" target="_blank" class="bg-blue-1"></q-btn>
+      <q-btn flat round dense :icon="mdiLaravel" size="md"  text-color="orange" href="https://laravel.com" target="_blank" class="bg-blue-1"></q-btn>
     </div>
   </footer>
 </template>
