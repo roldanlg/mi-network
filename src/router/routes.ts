@@ -29,7 +29,9 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/PreferencesPage',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/PreferencesPage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/PreferencesPage.vue') },
+    ],
   },
 
   // Always leave this as last one,

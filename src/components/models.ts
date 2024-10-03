@@ -8,6 +8,9 @@ export interface Meta {
 }
 
 export interface User {
-  name: string
-  email: string
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  friends: Array<User>;
 }

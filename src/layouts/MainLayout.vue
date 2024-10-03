@@ -17,7 +17,13 @@
         />
 
         <q-toolbar-title>
-          <q-btn flat to="/" icon="home" label="Mi Network" class="align-items-center"></q-btn>
+          <q-btn
+            flat
+            to="/"
+            icon="home"
+            label="Mi Network"
+            class="align-items-center"
+          ></q-btn>
         </q-toolbar-title>
 
         <div>
@@ -27,7 +33,9 @@
             flat
             @click="isLoginModalOpen = true"
             v-if="!loggedUser"
-          ></q-btn>
+          >
+            <q-tooltip class="bg-dark" :offset="[0, 5]">login</q-tooltip>
+          </q-btn>
           <q-btn
             icon="mdi-account-plus-outline"
             color="black"
@@ -35,7 +43,9 @@
             flat
             @click="isRegisterModalOpen = true"
             v-if="!loggedUser"
-          ></q-btn>
+          >
+            <q-tooltip class="bg-dark" :offset="[0, 5]">regístrate</q-tooltip>
+          </q-btn>
           <q-btn-dropdown
             split
             rounded
@@ -48,13 +58,17 @@
             <q-list>
               <q-item clickable v-close-popup to="/PreferencesPage">
                 <q-item-section>
-                  <q-item-label><q-icon name="mdi-cog" /> Preferencias</q-item-label>
+                  <q-item-label
+                    ><q-icon name="mdi-cog" /> Preferencias</q-item-label
+                  >
                 </q-item-section>
               </q-item>
               <q-separator></q-separator>
               <q-item clickable v-close-popup class="text-red">
                 <q-item-section class="text-right">
-                  <q-item-label @click="onLogOut">Salir <q-icon name="mdi-logout" /></q-item-label>
+                  <q-item-label @click="onLogOut"
+                    >Salir <q-icon name="mdi-logout"
+                  /></q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -66,7 +80,6 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-3">
       <q-list>
         <q-item-label header> Contenidos</q-item-label>
-
         <EssentialLink
           v-for="link in linksList"
           :key="link.title"
@@ -76,13 +89,15 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <transition
-        appear
-        enter-active-class="animated slideInLeft slower"
-        leave-active-class="animated slideOutRight slower"
-      >
-        <router-view />
-      </transition>
+      <router-view v-slot="{ Component }">
+        <transition
+          appear
+          enter-active-class="animated slideInLeft slower"
+          leave-active-class="animated slideOutRight slower"
+        >
+          <component :is="Component" />
+        </transition>
+      </router-view>
       <q-footer>
         <main-layout-footer></main-layout-footer>
       </q-footer>
