@@ -24,25 +24,36 @@ const emailRules = [
 const passwordRules = [(val: string) => !!val || 'El campo es obligatorio'];
 
 const isFormValid = computed(() => {
-  return emailRules.every(rule => rule(email.value) === true) && passwordRules.every(rule => rule(password.value) === true);
-})
+  return (
+    emailRules.every((rule) => rule(email.value) === true) &&
+    passwordRules.every((rule) => rule(password.value) === true)
+  );
+});
 
 const onOKClick = async () => {
   loading.value = true;
   try {
-    await authStore.login({ email: email.value, password: password.value })
-      .then (() => {
+    await authStore
+      .login({ email: email.value, password: password.value })
+      .then(() => {
         if (authStore.error) {
           console.log(authStore.error);
-          $q.notify({ type: 'negative', message: authStore.error, position: 'top-right' });
+          $q.notify({
+            type: 'negative',
+            message: authStore.error,
+            position: 'top-right',
+          });
         } else {
-          console.log(authStore.$state);
-          $q.notify({ type: 'positive', message: 'Hola ' + authStore.user?.name, position: 'bottom-right' });
+          $q.notify({
+            type: 'positive',
+            message: 'Hola ' + authStore.user?.name,
+            position: 'bottom-right',
+          });
           setTimeout(() => {
             onDialogOK();
           }, 2000);
         }
-      })
+      });
   } catch (error) {
     console.log(error);
   } finally {
@@ -53,9 +64,9 @@ const onOKClick = async () => {
 };
 
 const handleDialogHide = () => {
-  authStore.clearError()
-  onDialogHide()
-}
+  authStore.clearError();
+  onDialogHide();
+};
 </script>
 
 <template>

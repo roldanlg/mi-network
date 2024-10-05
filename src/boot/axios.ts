@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
+import { useAuthStore } from 'src/stores/auth-store';
 
 declare module 'vue' {
   interface ComponentCustomProperties {
@@ -15,6 +16,22 @@ declare module 'vue' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({ baseURL: 'http://mi-net-api/api/v0.1' });
+
+// Interceptor to add authorization token to all requests
+api.interceptors.request.use(
+  (config) => {
+    const authStore = useAuthStore();
+    const token = authStore.token;
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

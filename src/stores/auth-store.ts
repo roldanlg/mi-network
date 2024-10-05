@@ -8,7 +8,7 @@ interface Credentials {
 }
 
 interface RegistrationCredentials {
-  name: string
+  name: string;
   email: string;
   password: string;
 }
@@ -21,50 +21,48 @@ export const useAuthStore = defineStore('auth-store', {
     message: '',
   }),
   actions: {
-    clearError(){
+    updateUserData(user: User | null) {
+      this.user = user ? { ...user } : null;
+    },
+    clearError() {
       this.error = '';
     },
-    register(credentials: RegistrationCredentials) {
-      return api.post('/register', credentials)
-        .then((response) => {
-          console.log(response.data);
-          if (response.status === 201) {
-            this.message = response.data.message;
-            this.error = '';
-            this.user = null;
-            this.token = '';
-          } else {
-            this.error = response.data.error;
-          }
-        })
-        .catch((e) => {
-          if (e instanceof AxiosError) {
-            this.error = 'Fallo en el registro';
-          }
-        });
+    async register(credentials: RegistrationCredentials) {
+      try {
+        const response = await api.post('/user/register', credentials);
+        if (response.status === 201) {
+          this.message = response.data.message;
+          this.error = '';
+          this.user = null;
+          this.token = '';
+        } else {
+          this.error = response.data.error;
+        }
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          this.error = 'Fallo en el registro';
+        }
+      }
     },
-    login(credentials: Credentials) {
-      return api.post('/login', credentials)
-        .then((response) => {
-          if (response.status === 200) {
-            this.user = response.data.user;
-            this.token = response.data.token;
-            api.defaults.headers.common['Authorization'] =
-              'Bearer ' + response.data.token;
-            this.error = '';
-          } else {
-            this.error = 'Credenciales no válidas';
-          }
-        })
-        .catch((e) => {
-          if (e instanceof AxiosError) {
-            this.error = 'Credenciales no válidas';
-          }
-        });
+    async login(credentials: Credentials) {
+      try {
+        const response = await api.post('/user/login', credentials);
+        if (response.status === 200) {
+          this.user = response.data.user;
+          this.token = response.data.token;
+          this.error = '';
+        } else {
+          this.error = 'Credenciales no válidas';
+        }
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          this.error = 'Credenciales no válidas';
+        }
+      }
     },
     logout() {
       api
-        .post('logout', {})
+        .post('/user/logout', {})
         .then((response) => {
           if (response.status === 200) {
             this.user = null;
@@ -80,6 +78,9 @@ export const useAuthStore = defineStore('auth-store', {
             console.error(e);
             this.error = e.message;
           }
+        })
+        .finally(() => {
+          window.location.href = '/';
         });
     },
   },

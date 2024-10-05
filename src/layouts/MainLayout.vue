@@ -46,15 +46,13 @@
           >
             <q-tooltip class="bg-dark" :offset="[0, 5]">regístrate</q-tooltip>
           </q-btn>
-          <q-btn-dropdown
-            split
-            rounded
-            icon="mdi-account-outline"
-            color="black"
-            flat
-            v-if="loggedUser"
-            :label="loggedUser.name"
-          >
+          <q-btn-dropdown split rounded color="black" flat v-if="loggedUser">
+            <template v-slot:label>
+              <div class="row items-center no-wrap">
+                <q-avatar :icon="avatar" font-size="0.7em" size="xl"></q-avatar>
+                <div class="text-center q-ml-xs">{{ loggedUser.name }}</div>
+              </div>
+            </template>
             <q-list>
               <q-item clickable v-close-popup to="/PreferencesPage">
                 <q-item-section>
@@ -124,10 +122,17 @@ const isRegisterModalOpen = ref(false);
 const authStore = useAuthStore();
 console.log('iniciando vista');
 const theUser = computed<User | null>(() => authStore.user);
-
 const loggedUser = ref<User | null>(null);
+const avatar = ref(
+  `img:http://mi-net-api/storage/avatars/${loggedUser?.value?.avatar}` ||
+    'mdi-emoticon-outline'
+);
+
 watch(theUser, (newVal) => {
   loggedUser.value = newVal;
+  newVal?.avatar !== undefined
+    ? (avatar.value = `img:http://mi-net-api/storage/avatars/${newVal.avatar}`)
+    : 'mid-emoticon-outline';
 });
 
 defineOptions({
